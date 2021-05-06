@@ -33,7 +33,7 @@ public class UserManager implements UserService {
             EmailHelper.verifiedUser();
             authService.authGoogle(user);
         }
-        else if(result && CheckUserMailExists(user) && user.isAuthType()==false){
+        else if(result && rules && user.isAuthType()==false){
             EmailHelper.sendVerificationMail();
             EmailHelper.verifiedUser();
             userDao.register(user);
