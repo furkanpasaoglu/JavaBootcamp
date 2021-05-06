@@ -26,14 +26,15 @@ public class UserManager implements UserService {
 
     @Override
     public void register(User user) {
-        var result = ValidationTool.run(UserValidator.validate(user));
-        var rules = BusinessRules.run(CheckUserMailExists(user));
-        if(result && rules && user.isAuthType()==true){
+        var businessRules = BusinessRules.run(CheckUserMailExists(user));
+        var validationRules = ValidationTool.run(UserValidator.validate(user));
+        
+        if(validationRules && businessRules && user.isAuthType()==true){
             EmailHelper.sendVerificationMail();
             EmailHelper.verifiedUser();
             authService.authGoogle(user);
         }
-        else if(result && rules && user.isAuthType()==false){
+        else if(validationRules && businessRules && user.isAuthType()==false){
             EmailHelper.sendVerificationMail();
             EmailHelper.verifiedUser();
             userDao.register(user);
@@ -47,7 +48,7 @@ public class UserManager implements UserService {
     public void login(User user) {
         for (User users:userList){
             if(user.getEmail() == users.getEmail() && user.getPassword() == users.getPassword()){
-                var result = UserValidator.validate(user.getEmail(),user.getPassword());
+                var result = ValidationTool.Run(UserValidator.validate(user.getEmail(), user.getPassword()));
                 if(result){
                     userDao.login(user);
                     return;
